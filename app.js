@@ -15,7 +15,6 @@
     
     function authService($window) {
       var self = this;
-    
       // Add JWT methods here
     }
     
