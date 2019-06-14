@@ -15,7 +15,14 @@
     
     function authService($window) {
       var self = this;
-      // Add JWT methods here
+      self.parseJwt = function(token) {
+        var base64Url = token.split('.')[1]; //fetching the claims
+        var base64 = base64Url.replace('-', '+').replace('_', '/'); // convert the string to the standard of base 64 of which it actually is
+        return JSON.parse($window.atob(base64));// atob decodes the base 64, then we parse the JSON
+      }
+
+      console.log(self.parseJwt("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhpbWFuc2h1IiwiaWQiOjAsImV4cCI6MTU2MDYwNjUwNiwiaWF0IjoxNTYwNTIwMTA2fQ.h5J0-TjGHCfP-fGvv46OytQVrfm08WPnjYiuA2AIZtQ"));
+      //Note: Expiration Date is unix timestamp in epoch
     }
     
     function userService($http, API, auth) {
@@ -30,7 +37,7 @@
             password: password
           })
       }
-      
+
       self.login = function(username, password) {
         return $http.post(API + '/auth/login', {
             username: username,
