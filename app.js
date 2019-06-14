@@ -24,9 +24,23 @@
         return $http.get(API + '/auth/quote')
       }
     
-      // add authentication methods here
+      self.register = function(username, password) {
+        return $http.post(API + '/auth/register', {
+            username: username,
+            password: password
+          })
+      }
+      
+      self.login = function(username, password) {
+        return $http.post(API + '/auth/login', {
+            username: username,
+            password: password
+          })
+      };
     
     }
+
+    
     
     // We won't touch anything in here
     function MainCtrl(user, auth) {
