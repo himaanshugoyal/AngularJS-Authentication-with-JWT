@@ -23,6 +23,16 @@
 
       console.log(self.parseJwt("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImhpbWFuc2h1IiwiaWQiOjAsImV4cCI6MTU2MDYwNjUwNiwiaWF0IjoxNTYwNTIwMTA2fQ.h5J0-TjGHCfP-fGvv46OytQVrfm08WPnjYiuA2AIZtQ"));
       //Note: Expiration Date is unix timestamp in epoch
+
+      self.saveToken = function(token) {
+        $window.localStorage['jwtToken'] = token;
+      }
+
+      self.getToken = function() {
+        return $window.localStorage['jwtToken'];
+      }
+
+      console.log("token loaded: ", self.getToken());
     }
     
     function userService($http, API, auth) {
@@ -42,6 +52,9 @@
         return $http.post(API + '/auth/login', {
             username: username,
             password: password
+          }).then(function(res){
+              auth.saveToken(res.data.token);
+              return res;
           })
       };
     
