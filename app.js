@@ -8,6 +8,9 @@
     
         // If a token was sent back, save it
         response: function(res) {
+          if(res.config.url.indexOf(API) === 0 && res.data.token) {
+            auth.saveToken(res.data.token);
+          }        
           return res;
         },
       }
@@ -32,7 +35,18 @@
         return $window.localStorage['jwtToken'];
       }
 
+      self.isAuthed = function() {
+        var token = self.getToken();
+        if(token) {
+          var params = self.parseJwt(token);
+          return Math.round(new Date().getTime() / 1000) <= params.exp;
+        } else {
+          return false;
+        }
+      }
+
       console.log("token loaded: ", self.getToken());
+      console.log("am I authed: ", self.isAuthed());
     }
     
     function userService($http, API, auth) {
@@ -52,9 +66,6 @@
         return $http.post(API + '/auth/login', {
             username: username,
             password: password
-          }).then(function(res){
-              auth.saveToken(res.data.token);
-              return res;
           })
       };
     
@@ -63,7 +74,7 @@
     
     
     // We won't touch anything in here
-    function MainCtrl(user, auth) {
+    function MainCtrl(user, auth, $window) {
       var self = this;
     
       function handleRequest(res) {
@@ -86,6 +97,10 @@
       }
       self.logout = function() {
         auth.logout && auth.logout()
+      }
+
+      self.logout = function() {
+        $window.localStorage.removeItem('jwtToken');
       }
       self.isAuthed = function() {
         return auth.isAuthed ? auth.isAuthed() : false
